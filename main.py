@@ -10,6 +10,8 @@ load_dotenv(find_dotenv())
 
 bot = telegram.Bot(os.getenv('BOT_TOKEN'))
 
+logger.remove()
+
 
 def debug_only(record):
     return record["level"].name == "DEBUG"
