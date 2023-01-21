@@ -10,11 +10,27 @@ load_dotenv(find_dotenv())
 
 bot = telegram.Bot(os.getenv('BOT_TOKEN'))
 
+logger.add(
+    'info.log',
+    format='{time}::{level}::{message}',
+    level='INFO',
+    rotation='1 day',
+    compression='zip',
+)
+logger.add(
+    'error.log',
+    format='{time}::{level}::{message}',
+    level='ERROR',
+    rotation='1 day',
+    compression='zip',
+)
+
 
 def get_chat_id():
     """Get user chat_id"""
     try:
         chat_id = bot.get_updates()[-1].message.chat_id
+        logger.info(f'Chai ID = {chat_id}')
     except Exception as e:
         logger.error(e)
         chat_id = None
@@ -26,7 +42,7 @@ def send_message(response, chat_id):
     attempt = response.json().get('new_attempts')[0]
     title = attempt.get('lesson_title')
     lesson_link = attempt.get('lesson_url')
-
+    logger.info(response.json())
     if attempt.get('is_negative'):
         teacher_result = 'К сожалению, в работе нашлись ошибки.'
     else:

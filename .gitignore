@@ -1,3 +1,5 @@
 /.idea
 /venv
 /.env
+/info.log
+/error.log
