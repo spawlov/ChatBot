@@ -12,16 +12,16 @@ bot = telegram.Bot(os.getenv('BOT_TOKEN'))
 
 logger.add(
     'info.log',
-    format='{time}::{level}::{message}',
+    format='{level}::{time}::{message}',
     level='INFO',
-    rotation='1 day',
+    rotation='0:00',
     compression='zip',
 )
 logger.add(
     'error.log',
-    format='{time}::{level}::{message}',
+    format='{level}::{time}::{message}',
     level='ERROR',
-    rotation='1 day',
+    rotation='0:00',
     compression='zip',
 )
 
@@ -30,7 +30,6 @@ def get_chat_id():
     """Get user chat_id"""
     try:
         chat_id = bot.get_updates()[-1].message.chat_id
-        logger.info(f'Chai ID = {chat_id}')
     except Exception as e:
         logger.error(e)
         chat_id = None
@@ -63,6 +62,7 @@ def request_check():
     while True:
         if not chat_id:
             chat_id = get_chat_id()
+            logger.info(f'Chat ID = {chat_id}')
         else:
             try:
                 if params:
