@@ -12,6 +12,7 @@ bot = telegram.Bot(os.getenv('BOT_TOKEN'))
 
 
 def get_chat_id():
+    """Get user chat_id"""
     try:
         chat_id = bot.get_updates()[-1].message.chat_id
     except Exception as e:
@@ -20,16 +21,29 @@ def get_chat_id():
     return chat_id
 
 
+def send_message(response, chat_id):
+    """Sending message to user"""
+    attempt = response.json().get('new_attempts')[0]
+    title = attempt.get('lesson_title')
+    lesson_link = attempt.get('lesson_url')
+
+    if attempt.get('is_negative'):
+        teacher_result = 'К сожалению, в работе нашлись ошибки.'
+    else:
+        teacher_result = 'Преподавателю всё понравилось, ' \
+                         'можно приступать к следующему уроку!'
+    message_text = f'У вас проверили работу "{title}".\n' \
+                   f'{teacher_result}\n' \
+                   f'{lesson_link}'
+
+    bot.send_message(chat_id=chat_id, text=message_text)
+
+
 def request_check():
-    chat_id = None
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/39.0.2171.95 Safari/537.36',
-        'Authorization': os.getenv('DEV_MAN_TOKEN')
-    }
+    """Check lesson status"""
+    chat_id = params = None
+    headers = {'Authorization': os.getenv('DEVMAN_TOKEN')}
     url = 'https://dvmn.org/api/long_polling/'
-    params = None
     while True:
         if not chat_id:
             chat_id = get_chat_id()
@@ -41,23 +55,8 @@ def request_check():
                     )
                 else:
                     response = requests.get(url=url, headers=headers)
-                response.raise_for_status()
                 if response.json().get('status') == 'found':
-                    attempt = response.json().get('new_attempts')[0]
-                    title = attempt.get('lesson_title')
-                    lesson_link = attempt.get('lesson_url')
-                    if attempt.get('is_negative'):
-                        teacher_result = 'К сожалению, ' \
-                                         'в работе нашлись ошибки.'
-                    else:
-                        teacher_result = 'Преподавателю всё понравилось, ' \
-                                         'можно приступать к следующему уроку!'
-                    message_text = f'У вас проверили работу "{title}".\n' \
-                                   f'{teacher_result}\n' \
-                                   f'{lesson_link}'
-                    bot.send_message(
-                        chat_id=chat_id, text=message_text
-                    )
+                    send_message(response, chat_id)
                     params = None
                 elif response.json().get('status') == 'timeout':
                     timestamp = response.json().get('timestamp_to_request')
