@@ -10,10 +10,28 @@ load_dotenv(find_dotenv())
 
 bot = telegram.Bot(os.getenv('BOT_TOKEN'))
 
+
+def debug_only(record):
+    return record["level"].name == "DEBUG"
+
+
+def info_only(record):
+    return record["level"].name == "INFO"
+
+
+logger.add(
+    'debug.log',
+    format='{level}::{time}::{message}',
+    level='DEBUG',
+    filter=debug_only,
+    rotation='0:00',
+    compression='zip',
+)
 logger.add(
     'info.log',
     format='{level}::{time}::{message}',
     level='INFO',
+    filter=info_only,
     rotation='0:00',
     compression='zip',
 )
@@ -71,6 +89,7 @@ def request_check():
                     )
                 else:
                     response = requests.get(url=url, headers=headers)
+                logger.debug(response.url)
                 if response.json().get('status') == 'found':
                     send_message(response, chat_id)
                     params = None
