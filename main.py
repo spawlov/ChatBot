@@ -72,8 +72,8 @@ def get_lesson_status(chat_id, headers, bot):
             logger.error(e)
         except requests.exceptions.ConnectionError as e:
             logger.error(e)
+            logger.error(f'Pause: {60 * attempt_connect} sec.')
             sleep(60 * attempt_connect)
-            logger.error(f'Pause: {60 * attempt_connect}')
         except requests.exceptions.HTTPError as e:
             logger.error(e)
         else:
