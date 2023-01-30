@@ -81,7 +81,7 @@ def get_lesson_status(chat_id, headers, bot):
             lesson_status = response.json()
             logger.debug(lesson_status['request_query'])
             if lesson_status['status'] == 'found':
-                send_message(lesson_status, chat_id)
+                send_message(lesson_status, chat_id, bot)
                 params = {'timestamp': lesson_status['last_attempt_timestamp']}
             elif lesson_status['status'] == 'timeout':
                 params = {'timestamp': lesson_status['timestamp_to_request']}
