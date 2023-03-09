@@ -25,4 +25,4 @@ DEVMAN_TOKEN=<Токен для доступа к API DevMan>
 ```
 ### Цель проекта
 
-Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org/).
+Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [https://dvmn.org/](https://dvmn.org/referrals/B9ehIJNk0dwuMb4b8mm7HqIdHWjUo816kuCaKCHI/)
