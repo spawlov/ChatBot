@@ -5,13 +5,19 @@ import requests
 import telegram
 from dotenv import load_dotenv, find_dotenv
 from loguru import logger
+from notifiers.logging import NotificationHandler
 
 logger.remove()
 
 
 def main():
     load_dotenv(find_dotenv())
-    bot = telegram.Bot(os.getenv('BOT_TOKEN'))
+    bot = telegram.Bot(os.getenv('NOTIFIER_BOT_TOKEN'))
+    tg_handler_params = {
+        'token': os.getenv('LOGGER_BOT_TOKEN'),
+        'chat_id': int(os.getenv('ALLOWED_CHAT_ID'))
+    }
+    tg_handler = NotificationHandler('telegram', defaults=tg_handler_params)
     headers = {'Authorization': os.getenv('DEVMAN_TOKEN')}
     chat_id = int(os.getenv('ALLOWED_CHAT_ID'))
     logger.add(
@@ -35,6 +41,7 @@ def main():
         rotation='0:00',
         compression='zip',
     )
+    logger.add(tg_handler, level="INFO")
     get_lesson_status(chat_id, headers, bot)
 
 
