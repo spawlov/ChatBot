@@ -55,11 +55,9 @@ def send_message(lesson_status, chat_id, bot):
     if attempt.get('is_negative'):
         teacher_result = 'К сожалению, в работе нашлись ошибки.'
     else:
-        teacher_result = f'''
-        Преподавателю всё понравилось, можно приступать к следующему уроку!'''
+        teacher_result = f'''Преподавателю всё понравилось, можно приступать к следующему уроку!'''
 
-    message_text = f'''
-    У вас проверили работу "{title}".\n{teacher_result}\n{lesson_link}'''
+    message_text = f'''У вас проверили работу "{title}".\n{teacher_result}\n{lesson_link}'''
 
     bot.send_message(chat_id=chat_id, text=message_text)
 
@@ -75,14 +73,14 @@ def get_lesson_status(chat_id, headers, bot):
             attempt_connect += 1
             response = requests.get(url=url, headers=headers, params=params)
             response.raise_for_status()
-        except requests.exceptions.ReadTimeout as e:
-            logger.error(e)
-        except requests.exceptions.ConnectionError as e:
+        except (
+                requests.exceptions.ReadTimeout,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.HTTPError,
+        ) as e:
             logger.error(e)
             logger.error(f'Pause: {60 * attempt_connect} sec.')
             sleep(60 * attempt_connect)
-        except requests.exceptions.HTTPError as e:
-            logger.error(e)
         else:
             attempt_connect = 0
             lesson_status = response.json()
