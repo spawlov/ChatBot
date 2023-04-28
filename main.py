@@ -68,6 +68,7 @@ def get_lesson_status(chat_id, headers, bot):
     attempt_connect = 0
     logger.debug(f'Chat ID: {chat_id}')
     url = 'https://dvmn.org/api/long_polling/'
+    logger.info('Bot started...')
     while True:
         try:
             attempt_connect += 1
@@ -81,6 +82,9 @@ def get_lesson_status(chat_id, headers, bot):
             logger.error(e)
             logger.error(f'Pause: {60 * attempt_connect} sec.')
             sleep(60 * attempt_connect)
+        except KeyboardInterrupt:
+            logger.info('Bot stopped')
+            break
         else:
             attempt_connect = 0
             lesson_status = response.json()
