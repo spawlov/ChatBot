@@ -41,7 +41,7 @@ def main():
         rotation='0:00',
         compression='zip',
     )
-    logger.add(tg_handler, level="INFO")
+    logger.add(tg_handler, level="WARNING")
     get_lesson_status(chat_id, headers, bot)
 
 
@@ -68,7 +68,7 @@ def get_lesson_status(chat_id, headers, bot):
     attempt_connect = 0
     logger.debug(f'Chat ID: {chat_id}')
     url = 'https://dvmn.org/api/long_polling/'
-    logger.info('Bot started...')
+    logger.warning('Bot started...')
     while True:
         try:
             attempt_connect += 1
@@ -83,7 +83,7 @@ def get_lesson_status(chat_id, headers, bot):
             logger.error(f'Pause: {60 * attempt_connect} sec.')
             sleep(60 * attempt_connect)
         except KeyboardInterrupt:
-            logger.info('Bot stopped')
+            logger.warning('Bot stopped')
             break
         else:
             attempt_connect = 0
